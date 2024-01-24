@@ -1,38 +1,47 @@
-Role Name
+Nginx
 =========
 
-A brief description of the role goes here.
+Роль устанавливает и настраивает на хосты веб-сервер Nginx.
 
-Requirements
+Требования
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+На настраиваемых хостах должна быть уствновлена ОС Linux (RPM линейка), так как установка производится пакетным менеджером yum. Для корректной работы playbook также требуется следующее ПО: Ansible - версия не ниже 2.10.
+и Phyton - не ниже версии 3.6.
 
-Role Variables
+Переменные
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Данная роль доступна к использованию без переменных, так как все значения прописаны в коде. При необходимости можно изменить отдельные настройки конфигурации в шаблоне конфигурационного файла `templates/nginx.j2`.
 
-Dependencies
+
+Зависимости
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Для установки Nginx требуется наличие открытого хранилища пакетов eper-release (устанавливается также в рамках данной роли).
 
-Example Playbook
+
+Пример плейбука
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Установить роль можно через ansible-galaxy:
+```
+ansible-galaxy install -r requirements.yml
+```
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+указав в файле requirements.yml cледующее содержание:
+```
+  - src: https://github.com/LeonidKhoroshev/nginx
+    scm: git
+    name: nginx
+```
 
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Далее вписываем роль в плейбук:
+```
+- name: Install Nginx
+  hosts: webservers
+  remote_user: leo
+  become: true
+  roles:
+    - nginx-role 
+```
